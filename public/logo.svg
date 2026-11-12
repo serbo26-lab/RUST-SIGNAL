@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="rs-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1b2934"/>
+      <stop offset="100%" stop-color="#0d1318"/>
+    </linearGradient>
+    <linearGradient id="rs-rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffb57e"/>
+      <stop offset="100%" stop-color="#b85627"/>
+    </linearGradient>
+    <linearGradient id="rs-spire" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff0dc"/>
+      <stop offset="55%" stop-color="#ffb57e"/>
+      <stop offset="100%" stop-color="#b85627"/>
+    </linearGradient>
+  </defs>
+  <!-- Tactical chamfered armor badge -->
+  <polygon points="10,3 54,3 61,10 61,54 54,61 10,61 3,54 3,10" fill="url(#rs-bg)" stroke="url(#rs-rim)" stroke-width="3"/>
+  <polygon points="12,7 52,7 57,12 57,52 52,57 12,57 7,52 7,12" fill="none" stroke="#354955" stroke-width="1.2"/>
+  <!-- Corner steel rivets -->
+  <circle cx="13" cy="13" r="1.4" fill="#7c939e"/>
+  <circle cx="51" cy="13" r="1.4" fill="#7c939e"/>
+  <circle cx="13" cy="51" r="1.4" fill="#7c939e"/>
+  <circle cx="51" cy="51" r="1.4" fill="#7c939e"/>
+  <!-- Cyan beacon aura -->
+  <circle cx="32" cy="21" r="14" fill="#7edbdb" opacity="0.16"/>
+  <!-- Signal broadcast pulse waves -->
+  <path d="M22,29 A13,13 0 0,1 22,13" fill="none" stroke="#7edbdb" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M42,13 A13,13 0 0,1 42,29" fill="none" stroke="#7edbdb" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M16.5,33.5 A20,20 0 0,1 16.5,9.5" fill="none" stroke="#ffb57e" stroke-width="2.2" stroke-linecap="round" opacity="0.9"/>
+  <path d="M47.5,9.5 A20,20 0 0,1 47.5,33.5" fill="none" stroke="#ffb57e" stroke-width="2.2" stroke-linecap="round" opacity="0.9"/>
+  <!-- Armored base & horizon girder -->
+  <rect x="13" y="47" width="38" height="5" rx="1" fill="#23343f" stroke="#536d7c" stroke-width="1"/>
+  <rect x="15" y="45" width="34" height="2.5" fill="#d46b34"/>
+  <!-- Beacon tower lattice silhouette -->
+  <polygon points="32,20 22,47 42,47" fill="#131c23" stroke="url(#rs-spire)" stroke-width="2.6" stroke-linejoin="round"/>
+  <line x1="26" y1="38" x2="38" y2="38" stroke="#ffb57e" stroke-width="2"/>
+  <line x1="28" y1="30" x2="36" y2="30" stroke="#ffb57e" stroke-width="1.8"/>
+  <line x1="25" y1="45" x2="35.5" y2="31" stroke="#c86b3a" stroke-width="1.5"/>
+  <line x1="39" y1="45" x2="28.5" y2="31" stroke="#c86b3a" stroke-width="1.5"/>
+  <!-- Active transmitter diamond core -->
+  <polygon points="32,12.5 38.5,19 32,25.5 25.5,19" fill="#7edbdb" stroke="#10161c" stroke-width="1.5"/>
+  <circle cx="32" cy="19" r="2.6" fill="#ffffff"/>
+</svg>

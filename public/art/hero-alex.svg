@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" shape-rendering="crispEdges">
+<defs><linearGradient id="vest" x2="1" y2="1"><stop stop-color="#68886b"/><stop offset=".6" stop-color="#375641"/><stop offset="1" stop-color="#213d33"/></linearGradient><linearGradient id="gun" x2="1" y2="1"><stop stop-color="#8496a2"/><stop offset=".5" stop-color="#3c4d59"/><stop offset="1" stop-color="#1d2731"/></linearGradient></defs>
+<!-- silhouette of a fast-moving assault specialist -->
+<path d="M43 236 36 200 47 155 78 128 158 128 189 149 209 211 210 240Z" fill="#111a21" stroke="#10131b" stroke-width="8"/>
+<path d="M55 240 49 184 65 151 94 140 152 137 180 153 196 240Z" fill="url(#vest)"/>
+<!-- shoulders and chest armour -->
+<path d="M54 171 70 144 92 146 103 181 80 202 46 189Z" fill="#486d55" stroke="#1c322d" stroke-width="5"/>
+<path d="M153 142 179 152 198 187 169 205 144 181Z" fill="#456249" stroke="#192e2a" stroke-width="5"/>
+<path d="M93 158h62l19 72-87 9-12-54z" fill="#304f41" stroke="#182b27" stroke-width="5"/>
+<path d="M99 174h48v31H99z" fill="#6f8d6a"/>
+<path d="M106 178h32v11h-32z" fill="#b2b77c"/>
+<path d="M96 206h63v13H96z" fill="#253a36"/>
+<!-- utility pouches -->
+<rect x="89" y="221" width="22" height="19" fill="#98754d" stroke="#40352c" stroke-width="4"/>
+<rect x="116" y="219" width="25" height="21" fill="#ad8557" stroke="#493c33" stroke-width="4"/>
+<rect x="147" y="217" width="23" height="23" fill="#936d43" stroke="#49392f" stroke-width="4"/>
+<!-- neck -->
+<path d="M103 120h38v40l-20 16-24-20Z" fill="#b87d5d" stroke="#222029" stroke-width="5"/>
+<path d="M107 136 137 132v24l-15 8-14-8z" fill="#dfad81"/>
+<!-- hair behind face -->
+<path d="M76 71 85 45 103 37 145 38 164 56 167 122 151 140 142 117 92 128 77 106Z" fill="#161f2a" stroke="#10131b" stroke-width="5"/>
+<!-- face and ear -->
+<path d="M92 68 115 49 150 62 155 109 140 137 116 143 96 127 87 96Z" fill="#efb789" stroke="#412c2c" stroke-width="5"/>
+<path d="M146 95h16v20l-17 7z" fill="#c98768" stroke="#412c2c" stroke-width="4"/>
+<path d="M93 92h8v30h-8Z" fill="#cb8c69"/>
+<path d="M118 110h13v7h-11z" fill="#c88766"/>
+<path d="M117 125h21l-5 5h-12z" fill="#623e3f"/>
+<!-- angry eyes -->
+<path d="M99 89h18l3 5-20 2Z M130 91h15l-3 7-11-1Z" fill="#18242c"/>
+<rect x="108" y="94" width="5" height="6" fill="#202930"/>
+<rect x="133" y="96" width="5" height="5" fill="#202930"/>
+<!-- signature scar -->
+<path d="M147 96 136 120" stroke="#9e584b" stroke-width="3"/>
+<!-- black short hair and iconic crimson bandana -->
+<path d="M88 76 83 57 106 39 135 39 157 56 153 77 127 68 113 72 99 73Z" fill="#17202a" stroke="#10141a" stroke-width="4"/>
+<path d="M79 66 83 55 111 49 147 51 160 63 158 78 137 73 101 76 85 79Z" fill="#dc4c42" stroke="#792d31" stroke-width="5"/>
+<path d="M157 71 191 76 181 89 204 98 172 97 160 88Z" fill="#b63738" stroke="#6d2d34" stroke-width="4"/>
+<path d="M89 61h53v6H89z" fill="#f16b4f"/>
+<!-- diagonal rifle held in front -->
+<path d="M15 211 25 186 104 168 116 177 106 196 51 213 34 231Z" fill="url(#gun)" stroke="#131d27" stroke-width="7"/>
+<path d="M24 188 44 171 57 181 52 202 34 217z" fill="#313e46" stroke="#131d27" stroke-width="5"/>
+<path d="M99 167 177 141 186 155 112 181Z" fill="#5c6a72" stroke="#17212c" stroke-width="5"/>
+<rect x="173" y="141" width="51" height="8" transform="rotate(-15 173 141)" fill="#75818b" stroke="#18232c" stroke-width="4"/>
+<path d="M79 174 98 157 112 162 112 179 92 190Z" fill="#e1a67b" stroke="#482e2c" stroke-width="5"/>
+<path d="M101 168 124 173 126 188 112 193 94 185Z" fill="#d39a75" stroke="#482e2c" stroke-width="5"/>
+<rect x="96" y="181" width="17" height="8" fill="#373b39"/>
+<!-- badge -->
+<path d="M162 176h16l-8 17Z" fill="#d6b95f"/><circle cx="169" cy="180" r="3" fill="#fdf2b5"/>
+<!-- fragments highlight -->
+<path d="M51 178v19m126 1 8 22" stroke="#93a885" stroke-width="4" opacity=".7"/>
+</svg>

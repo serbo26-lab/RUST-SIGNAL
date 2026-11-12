@@ -1,0 +1,76 @@
+name: Game verification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: game-verification-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-play:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install build dependencies
+        run: npm ci
+      - name: Privacy and public-source hygiene checks
+        run: node scripts/privacy-audit.mjs
+      - name: Build VPS website
+        run: npm run build
+      - name: Verify site depth and links
+        run: node scripts/site-structure.check.mjs
+      - name: Unit tests
+        run: npm test
+      - name: Global leaderboard API integration (SQLite + anti-spam)
+        run: node scripts/leaderboard-api.check.mjs
+      - name: Persistent player identity and six-mission campaign leaderboard
+        run: node scripts/leaderboard-profile.check.mjs
+      - name: Verify isolated leaderboard installation and Nginx safety
+        run: |
+          sh -n deploy/install-leaderboard.sh
+          node scripts/leaderboard-install.check.mjs
+      - name: Validate VPS installer and site-only repository layout
+        run: |
+          sh -n deploy/vps.sh
+          bash -n deploy/vps.sh
+          node scripts/check-vps-layout.mjs
+          node scripts/vps-smoke.mjs
+      - name: Verify safe takeover of an existing single-domain Nginx site
+        run: |
+          sh -n deploy/replace-domain.sh
+          python3 -m py_compile deploy/render-replacement.py
+          node scripts/replace-domain.check.mjs
+      - name: Verify static selfmask takeover without changing the proxy or ACME
+        run: |
+          sh -n deploy/selfmask-webroot.sh
+          node scripts/selfmask-webroot.check.mjs
+      - name: Validate Nginx stream-default shared HTTPS site installer
+        run: |
+          sh -n deploy/stream-default-site.sh
+          node scripts/stream-default-site.check.mjs
+      - name: Install Chromium smoke-test dependencies
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Gameplay smoke on compiled site
+        run: node scripts/browser-smoke.mjs
+      - name: Production site smoke (desktop and mobile)
+        run: node scripts/site-smoke.mjs
+      - name: Package deployable site
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-signal-site
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14

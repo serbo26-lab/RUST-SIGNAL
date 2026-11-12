@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" shape-rendering="crispEdges">
+<defs><linearGradient id="armor" x2="1" y2="1"><stop stop-color="#8b8b84"/><stop offset=".43" stop-color="#53616c"/><stop offset="1" stop-color="#27323f"/></linearGradient><linearGradient id="weapon" x2="1" y2="1"><stop stop-color="#778d94"/><stop offset=".4" stop-color="#3c5259"/><stop offset="1" stop-color="#1d2935"/></linearGradient></defs>
+<!-- a heavy bearded military engineer -->
+<path d="M22 239 35 167 69 133 166 137 196 159 224 237Z" fill="#19242e" stroke="#121821" stroke-width="8"/>
+<path d="M32 240 50 169 80 147 151 149 184 173 211 240Z" fill="url(#armor)" stroke="#212b34" stroke-width="6"/>
+<!-- shoulder armour -->
+<path d="M44 171 67 141 92 151 89 204 40 217Z" fill="#5b6b73" stroke="#252e3a" stroke-width="6"/>
+<path d="M147 145 185 157 210 200 170 221 142 194Z" fill="#53616e" stroke="#252d39" stroke-width="6"/>
+<rect x="49" y="169" width="34" height="9" fill="#aab0a7"/>
+<path d="M61 199h109v37H61z" fill="#303c49" stroke="#202832" stroke-width="6"/>
+<rect x="91" y="209" width="23" height="21" fill="#a38a58" stroke="#3e423c" stroke-width="4"/>
+<rect x="118" y="209" width="22" height="21" fill="#a38a58" stroke="#3e423c" stroke-width="4"/>
+<rect x="145" y="209" width="20" height="21" fill="#a38a58" stroke="#3e423c" stroke-width="4"/>
+<path d="M72 154 94 164 148 220 136 229 77 174Z" fill="#a38c6b" stroke="#423d3a" stroke-width="5"/>
+<path d="M96 166 106 173l-6 14-11-11zM113 184l11 13-8 11-13-15z" fill="#e0c378"/>
+<!-- neck -->
+<path d="M103 116h42v42l-20 18-27-23Z" fill="#a87558" stroke="#2e2a28" stroke-width="5"/>
+<path d="M106 138h34v20l-15 9-18-13Z" fill="#d5a07b"/>
+<!-- huge short dark hair -->
+<path d="M73 73 82 41 103 29 142 32 164 50 173 88 160 139 83 137Z" fill="#2d2727" stroke="#101820" stroke-width="7"/>
+<path d="M83 69 96 53 150 53 163 78 156 110 145 128 113 142 91 129 80 99Z" fill="#dba27c" stroke="#47312f" stroke-width="5"/>
+<path d="M85 79v20l12 28-5-35Z" fill="#bc8465"/>
+<path d="M126 111h16v6h-14z" fill="#bc8064"/>
+<!-- rugged eyebrow and eyes -->
+<path d="M94 88 116 85l2 6-22 6Z M131 86l21 4-5 7-16-3Z" fill="#2d2525"/>
+<rect x="108" y="94" width="5" height="6" fill="#17202b"/>
+<rect x="135" y="95" width="5" height="6" fill="#17202b"/>
+<!-- full beard -->
+<path d="M91 111 103 119 110 119 126 126 146 112 152 123 146 143 132 157 114 152 99 140Z" fill="#4d352b" stroke="#2a2527" stroke-width="4"/>
+<path d="M108 124h26v7h-26z" fill="#29242a"/>
+<path d="M115 139h16v7h-16z" fill="#77523b"/>
+<path d="M81 75 88 46 104 36 141 36 166 58 157 73 129 60 107 71Z" fill="#372d2b" stroke="#151920" stroke-width="5"/>
+<path d="M88 61h69l5 10-72 6Z" fill="#5e4637"/>
+<!-- radio headphone -->
+<path d="M77 76V63l14-26 18-6" stroke="#a7aeb2" stroke-width="8" fill="none"/>
+<rect x="78" y="78" width="13" height="30" rx="2" fill="#657b7c" stroke="#232c2f" stroke-width="4"/>
+<path d="M87 90 62 105" stroke="#778f92" stroke-width="5"/>
+<!-- heavy automatic cannon -->
+<path d="M19 206 43 183l50-14 57 11 19 30-13 28-86 2-36-10Z" fill="url(#weapon)" stroke="#131d28" stroke-width="7"/>
+<path d="M51 183 107 169l22 17-77 21Z" fill="#74838d"/>
+<rect x="150" y="184" width="87" height="14" fill="#788994" stroke="#121d25" stroke-width="6"/>
+<path d="M216 178h21v24h-21z" fill="#394953"/>
+<path d="M103 210h43l-15 30h-39Z" fill="#26313d" stroke="#151d25" stroke-width="5"/>
+<path d="M95 191 115 188 129 202 123 217 97 217 86 207Z" fill="#e0a481" stroke="#4b312d" stroke-width="4"/>
+<!-- grenade on strap -->
+<path d="M164 211h17v25h-17z" fill="#647b57" stroke="#283730" stroke-width="4"/>
+<rect x="169" y="205" width="9" height="7" fill="#8a8f87"/>
+<path d="M173 215v16m-6-8h12" stroke="#283c36" stroke-width="3"/>
+</svg>

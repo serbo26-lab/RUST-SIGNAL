@@ -1,0 +1,20 @@
+{
+  "name": "rust-signal",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "RUST SIGNAL — four-chapter browser game, deployable as a static website on any VPS",
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "test:site": "node scripts/site-smoke.mjs"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vitest": "^4.1.11"
+  }
+}

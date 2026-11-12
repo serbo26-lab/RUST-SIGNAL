@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" shape-rendering="crispEdges">
+<defs>
+  <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#080f23"/><stop offset=".45" stop-color="#24344d"/><stop offset=".78" stop-color="#92513e"/><stop offset="1" stop-color="#d68a53"/></linearGradient>
+  <linearGradient id="sea" x2="0" y2="1"><stop stop-color="#193b53"/><stop offset="1" stop-color="#091927"/></linearGradient>
+  <linearGradient id="steel" x2="1" y2="0"><stop stop-color="#75818a"/><stop offset=".4" stop-color="#394856"/><stop offset="1" stop-color="#1d2a36"/></linearGradient>
+  <pattern id="stripe" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#a85636"/><path d="M0 16 16 0" stroke="#723d2a" stroke-width="3"/></pattern>
+</defs>
+<rect width="960" height="540" fill="url(#sky)"/>
+<!-- translucent signal rings -->
+<circle cx="706" cy="215" r="119" fill="#e89e66" opacity=".1"/>
+<circle cx="706" cy="215" r="99" fill="#ffb16e" opacity=".12"/>
+<circle cx="706" cy="215" r="75" fill="#eeb67e" opacity=".48"/>
+<circle cx="706" cy="215" r="63" fill="#ffcd82" opacity=".48"/>
+<path d="M0 94H960M0 97H960" stroke="#9aa5b1" opacity=".06"/>
+<!-- long stepped clouds -->
+<g fill="#627082" opacity=".27">
+ <path d="M24 135h112v-14h41v-10h43v13h49v20H24z"/>
+ <path d="M420 123h128v-12h76v8h50v18H420z"/>
+ <path d="M759 93h91v-8h39v10h50v16H759z"/>
+</g>
+<!-- distant industrial skyline -->
+<g fill="#273447">
+ <path d="M0 311h79v-31h30v-48h18v48h44v31h45v-77h58v77h72v-35h35v35h35v-60h65v60h35v-42h48v42h61v-64h25v-60h12v60h28v64h65v-46h48v46h69v-37h54v37h55v-54h26v54h42v229H0z"/>
+</g>
+<g fill="#405061">
+ <path d="M0 324h180v-23h35v23h44v-31h24v31h165v-22h64v22h76v-31h22v31h148v-27h50v27h152v216H0z"/>
+</g>
+<g fill="#b77a51" opacity=".45">
+ <path d="M45 296h10v17H45zm13 0h8v17h-8zm213 2h6v11h-6zm162 8h7v10h-7zm158 0h8v13h-8zm207-1h5v10h-5z"/>
+</g>
+<!-- gantry cranes on right and left -->
+<g stroke="#131f2b" stroke-width="10" fill="none" stroke-linejoin="miter">
+  <path d="M31 349V154l145-34 40 5m-145 31h164M51 152l92 78M70 153l-26 65M70 153l106-33M176 121l36 43"/>
+  <path d="M862 340V140l-199-30-72 5M866 146H605M804 140l47 66M805 141l-120-29"/>
+  <path d="M915 351V216l-98-28m98 40H789"/>
+</g>
+<g stroke="#69717c" stroke-width="4" fill="none">
+  <path d="M77 150V305m98-183v116M166 123l-12 129M708 119v137M792 138v140M827 136v181"/>
+</g>
+<path d="M154 248h18v38h-18zm553 6h17v44h-17z" fill="#a37a49"/>
+<!-- harbor sea -->
+<path d="M0 370H960V540H0z" fill="url(#sea)"/>
+<g fill="#50819b" opacity=".45">
+ <rect x="0" y="386" width="171" height="3"/><rect x="210" y="401" width="201" height="3"/><rect x="483" y="389" width="180" height="3"/><rect x="700" y="412" width="230" height="2"/>
+ <rect x="45" y="437" width="260" height="2"/><rect x="451" y="451" width="236" height="2"/><rect x="710" y="469" width="192" height="3"/>
+</g>
+<!-- two ships: large near-right -->
+<path d="M513 378H958l-53 86H569z" fill="#121e2a" stroke="#77828c" stroke-width="5"/>
+<path d="M539 386H939l-24 56H568z" fill="#2b3642"/>
+<path d="M574 355h86v26h-86zm12-24h58v24h-58zm252-1h62v53h-62zm14-19h35v19h-35z" fill="url(#steel)"/>
+<path d="M694 346h103v30H694zm5-32h92v30h-92z" fill="url(#stripe)" stroke="#17242e" stroke-width="4"/>
+<g stroke="#1a222e" stroke-width="5"><path d="M587 360h57m50 1h97m-80-48v-22m39 23v-24m118 40v-100"/></g>
+<g fill="#fec675"><rect x="595" y="337" width="8" height="7"/><rect x="610" y="337" width="8" height="7"/><rect x="625" y="337" width="8" height="7"/><rect x="850" y="340" width="8" height="7"/><rect x="868" y="340" width="8" height="7"/></g>
+<!-- foreground concrete dock -->
+<path d="M0 443H507l-42 97H0z" fill="#38434c"/>
+<path d="M0 439h508v14H0z" fill="#788186"/>
+<g stroke="#232c34" stroke-width="6"><path d="M12 453v87m105-87v87m122-87v87m116-87v87m117-87v87"/></g>
+<path d="M0 469h513v9H0z" fill="#232c33"/>
+<!-- cranes, loading machinery -->
+<g fill="#c9853f" stroke="#151f29" stroke-width="6">
+ <path d="M0 296h33v151H0z"/>
+ <path d="M26 300h182v19H26z"/>
+ <path d="M122 324h8v67h-8z" fill="#aab0b8"/>
+ <path d="M106 391h41v23h-41z" fill="#4a6572"/>
+</g>
+<!-- supply containers -->
+<g stroke="#1a222c" stroke-width="5">
+ <rect x="211" y="385" width="125" height="55" fill="#6f8b84"/>
+ <rect x="338" y="385" width="128" height="55" fill="#a65b43"/>
+ <rect x="212" y="337" width="125" height="47" fill="#ae7753"/>
+ <rect x="338" y="338" width="92" height="46" fill="#546f91"/>
+</g>
+<g stroke="#293a45" stroke-width="4" opacity=".7">
+  <path d="M224 347v30m17-30v30m17-30v30m17-30v30m17-30v30m17-30v30"/>
+  <path d="M224 395v35m17-35v35m17-35v35m17-35v35m17-35v35m17-35v35"/>
+  <path d="M350 395v35m17-35v35m17-35v35m17-35v35m17-35v35m17-35v35"/>
+</g>
+<!-- hazard lights & distant gunships -->
+<rect x="23" y="288" width="10" height="8" fill="#ff735d"/>
+<rect x="851" y="128" width="12" height="9" fill="#ff564b"/>
+<path d="M514 206h32l20 6h40l-8 7h-40l-8 5h-8v-7h-24z" fill="#192936" opacity=".85"/>
+<path d="M490 205h121m-72 1v-8" stroke="#263d4b" stroke-width="3"/>
+<!-- vignette sides -->
+<rect width="120" height="540" fill="#040a13" opacity=".35"/>
+<rect x="840" width="120" height="540" fill="#040a13" opacity=".35"/>
+<rect y="0" width="960" height="60" fill="#060c17" opacity=".25"/>
+</svg>
