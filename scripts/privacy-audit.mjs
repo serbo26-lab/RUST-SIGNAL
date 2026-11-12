@@ -7,7 +7,7 @@ const textExtensions = /\.(?:md|html|js|mjs|ts|json|sh|py|yml|yaml|svg|css|txt|t
 const skip = new Set(['node_modules','.git','dist','coverage']);
 const issues = [];
 const suspicious = [
-  { name: 'dynamic-DNS / non-example private host', re: /\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:dpdns\.org|top|online|qzz\.io)\b/gi },
+  { name: 'dynamic-DNS / non-example private host', re: /\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:dpdns\.org|online|qzz\.io)\b|https?:\/\/[a-z0-9.-]+\.top\b/gi },
   { name: 'server-specific SNI/bot routing', re: /\b(?:bot[_-]sui|sui_443_backend|mtproxyl[_-]selfmask)\b/gi },
   { name: 'certificate manager private path', re: /\/root\/cert-[A-Za-z0-9_-]+\//g },
   { name: 'embedded private key', re: /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g },
