@@ -165,7 +165,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.hpMax = this.hp;
     this.scoreValue = Math.round(this.scoreValue * d.scoreBonus);
     this.setDepth(40);
-    this.body!.setAllowGravity(kind !== 'spider' && kind !== 'drone');
+    (this.body as Phaser.Physics.Arcade.Body).setAllowGravity(kind !== 'spider' && kind !== 'drone');
     (this.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(false);
     if (kind === 'spider') {
       this.y = 120;
