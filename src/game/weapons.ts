@@ -135,7 +135,7 @@ export class WeaponsSystem {
     const e = b.create(x, y, tex) as Phaser.Physics.Arcade.Image;
     e.setDepth(54).setFlipX(dir < 0);
     (e.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
-    e.body!.setVelocityX(dir * 430);
+    (e.body as Phaser.Physics.Arcade.Body).setVelocityX(dir * 430);
     (e as any).dmg = Math.max(1, Math.round(diff().dmgMul)); // рекрут — мягче, хардкор — злее
     const glow = S.add?.ellipse?.(x, y, 16, 7, 0xff524f, 0.45)
       ?.setDepth(53)?.setBlendMode?.(Phaser.BlendModes.ADD);
@@ -181,9 +181,9 @@ export class WeaponsSystem {
     SFX.play('roll', 0.5);
     const g = this.grenades.create(x, y, 'grenade') as Phaser.Physics.Arcade.Image;
     g.setDepth(56);
-    g.body!.setAllowGravity(true);
-    g.body!.setBounce(0.45, 0.3);
-    g.body!.setCollideWorldBounds(false);
+    (g.body as Phaser.Physics.Arcade.Body).setAllowGravity(true);
+    (g.body as Phaser.Physics.Arcade.Body).setBounce(0.45, 0.3);
+    (g.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(false);
     (g as any).fuse = S.time.now + 1100;
     (g as any).power = power;
     (g as any).enemyOwned = enemyOwned;
@@ -196,7 +196,7 @@ export class WeaponsSystem {
     g.setAngularVelocity((dir || 1) * 320);
     const vx = vxOverride !== undefined ? vxOverride : (dir === 0 ? rand(-40, 40) : dir * 260);
     const vy = vyOverride !== undefined ? vyOverride : -330;
-    g.body!.setVelocity(vx, vy);
+    (g.body as Phaser.Physics.Arcade.Body).setVelocity(vx, vy);
   }
 
   update(time: number) {
