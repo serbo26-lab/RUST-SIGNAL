@@ -69,7 +69,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.setOrigin(0.5, 1);
     this.setDepth(45);
     (this.body as Phaser.Physics.Arcade.Body).setSize(200, 260).setOffset(20, 30);
-    this.body!.setAllowGravity(false);
+    (this.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
     this.hook = scene.add.graphics().setDepth(46);
     if (scene.add?.triangle) {
       this.beam = scene.add.triangle(x - 18, y - 138, 0, 0, -230, 150, -85, 165, 0xffd078, 0.14)
