@@ -76,6 +76,33 @@ cleanup() {
   # Restore old API service files on failed build/provisioning/Nginx checks.
   # Persist SQLite itself across updates and failed deployments.
   if [ "$API_PREPARED" -eq 1 ] && [ "$COMMITTED" -eq 0 ]; then
+    if [ "$OS" = freebsd ]; then
+      service rust_signal_leaderboard onestop >/dev/null 2>&1 || :
+      api_unit=/usr/local/etc/rc.d/rust_signal_leaderboard
+      api_snippet=/usr/local/etc/nginx/snippets/rust-signal-api.conf
+      if [ "$API_OLD_UNIT" -eq 1 ]; then
+        cp -p "$WORK/api-unit.original" "$api_unit" || :
+      else
+        rm -f "$api_unit" || :
+        sysrc -x rust_signal_leaderboard_enable >/dev/null 2>&1 || :
+      fi
+      if [ "$API_OLD_SNIPPET" -eq 1 ]; then
+        cp -p "$WORK/api-snippet.original" "$api_snippet" || :
+      else
+        rm -f "$api_snippet" || :
+      fi
+      if [ "$API_OLD_CODE" -eq 1 ]; then
+        cp -p "$WORK/api-code.original" /opt/rust-signal/leaderboard/leaderboard.mjs || :
+      else
+        rm -f /opt/rust-signal/leaderboard/leaderboard.mjs || :
+      fi
+      if [ "$API_PREVIOUS_ACTIVE" -eq 1 ]; then
+        service rust_signal_leaderboard start >/dev/null 2>&1 || :
+      fi
+      if nginx -t >/dev/null 2>&1 && service nginx status >/dev/null 2>&1; then
+        service nginx reload >/dev/null 2>&1 || :
+      fi
+    else
     systemctl stop rust-signal-leaderboard.service >/dev/null 2>&1 || :
     if [ "$API_OLD_UNIT" -eq 1 ]; then
       cp -p "$WORK/api-unit.original" /etc/systemd/system/rust-signal-leaderboard.service || :
@@ -102,6 +129,7 @@ cleanup() {
     # original proxy configuration rather than the rejected version.
     if nginx -t >/dev/null 2>&1 && systemctl is-active --quiet nginx; then
       systemctl reload nginx >/dev/null 2>&1 || :
+    fi
     fi
   fi
   [ -z "$WORK" ] || rm -rf "$WORK"
@@ -418,8 +446,35 @@ if [ "$OS" != freebsd ] && [ -z "$(printenv RUST_SIGNAL_SKIP_ONLINE_API 2>/dev/n
   systemctl is-active --quiet rust-signal-leaderboard.service && API_PREVIOUS_ACTIVE=1 || :
   API_PREPARED=1
   sh deploy/install-leaderboard.sh "$PWD/server/leaderboard.mjs" "$(command -v node)" "$DOMAIN"
-elif [ "$OS" = freebsd ]; then
-  say 'Global leaderboard requires Linux/systemd; static FreeBSD hosting has no online ranking.'
+elif [ "$OS" = freebsd ] && [ -z "$(printenv RUST_SIGNAL_SKIP_ONLINE_API 2>/dev/null || :)" ]; then
+  [ -f deploy/install-leaderboard-freebsd.sh ] && [ -f server/leaderboard.mjs ] ||
+    fail 'Missing FreeBSD leaderboard deployment files.'
+  api_unit=/usr/local/etc/rc.d/rust_signal_leaderboard
+  api_snippet=/usr/local/etc/nginx/snippets/rust-signal-api.conf
+  [ ! -e "$api_unit" ] ||
+    grep -Fq '# Rust Signal FreeBSD rc service (loopback only)' "$api_unit" ||
+    fail 'Unmanaged FreeBSD leaderboard service.'
+  [ ! -e "$api_snippet" ] ||
+    grep -Fq '# Rust Signal global scoreboard.' "$api_snippet" ||
+    fail 'Unmanaged FreeBSD leaderboard Nginx snippet.'
+  [ ! -e /opt/rust-signal/leaderboard/leaderboard.mjs ] ||
+    grep -Fq 'Rust Signal global leaderboard on ' /opt/rust-signal/leaderboard/leaderboard.mjs ||
+    fail 'Unmanaged FreeBSD leaderboard source.'
+  if [ -f "$api_unit" ]; then
+    cp -p "$api_unit" "$WORK/api-unit.original"
+    API_OLD_UNIT=1
+  fi
+  if [ -f "$api_snippet" ]; then
+    cp -p "$api_snippet" "$WORK/api-snippet.original"
+    API_OLD_SNIPPET=1
+  fi
+  if [ -f /opt/rust-signal/leaderboard/leaderboard.mjs ]; then
+    cp -p /opt/rust-signal/leaderboard/leaderboard.mjs "$WORK/api-code.original"
+    API_OLD_CODE=1
+  fi
+  service rust_signal_leaderboard status >/dev/null 2>&1 && API_PREVIOUS_ACTIVE=1 || :
+  API_PREPARED=1
+  sh deploy/install-leaderboard-freebsd.sh "$PWD/server/leaderboard.mjs" "$(command -v node)" "$DOMAIN"
 fi
 
 if [ -L "$CURRENT" ]; then PREVIOUS=$(readlink "$CURRENT"); fi
@@ -480,9 +535,17 @@ if [ "$NEW_CONF" -eq 1 ]; then
   fi
 fi
 # New sites get the same API include as existing managed sites.
-if [ "$OS" != freebsd ] && [ -z "$(printenv RUST_SIGNAL_SKIP_ONLINE_API 2>/dev/null || :)" ] &&
+if [ -z "$(printenv RUST_SIGNAL_SKIP_ONLINE_API 2>/dev/null || :)" ] &&
    ! grep -Fq 'rust-signal-api.conf' "$CONFIG"; then
-  sed '/^[[:space:]]*server_name /a\    include /etc/nginx/snippets/rust-signal-api.conf;' "$CONFIG" > "$WORK/nginx-with-api.conf"
+  if [ "$OS" = freebsd ]; then
+    awk '/^[[:space:]]*server_name[[:space:]]/ {
+      print
+      print "    include /usr/local/etc/nginx/snippets/rust-signal-api.conf;"
+      next
+    } { print }' "$CONFIG" > "$WORK/nginx-with-api.conf"
+  else
+    sed '/^[[:space:]]*server_name /a\    include /etc/nginx/snippets/rust-signal-api.conf;' "$CONFIG" > "$WORK/nginx-with-api.conf"
+  fi
   cp "$WORK/nginx-with-api.conf" "$CONFIG"
 fi
 nginx -t || fail 'Nginx validation failed; previous release restored.' 
