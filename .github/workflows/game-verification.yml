@@ -46,6 +46,10 @@ jobs:
           bash -n deploy/vps.sh
           node scripts/check-vps-layout.mjs
           node scripts/vps-smoke.mjs
+      - name: Verify FreeBSD rc.d / Node SQLite installer
+        run: |
+          sh -n deploy/install-leaderboard-freebsd.sh
+          node scripts/freebsd-install.check.mjs
       - name: Verify safe takeover of an existing single-domain Nginx site
         run: |
           sh -n deploy/replace-domain.sh
