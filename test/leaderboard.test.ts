@@ -131,5 +131,6 @@ describe('leaderboard persistence & validation', () => {
   it('formats elapsed run duration in m:ss', () => {
     expect(formatDuration(65)).toBe('1:05');
     expect(formatDuration(0)).toBe('0:00');
+    expect(formatDuration(3661)).toBe('1:01:01');
   });
 });
