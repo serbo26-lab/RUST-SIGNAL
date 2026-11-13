@@ -14,6 +14,8 @@ export interface LeaderboardEntry {
   livesLeft: number;
   elapsedSec: number;
   dateIso: string;
+  /** Number of distinct missions contributing to an overall online result. */
+  missionsCompleted?: number;
 }
 
 export type LeaderboardBoard = Record<DifficultyId, LeaderboardEntry[]>;
@@ -194,7 +196,10 @@ export function clearLeaderboard(): void {
 
 export function formatDuration(totalSeconds: number): string {
   const secs = Math.max(0, Math.round(totalSeconds));
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
-  return `${m}:${String(s).padStart(2, '0')}`;
+  const hours = Math.floor(secs / 3600);
+  const minutes = Math.floor((secs % 3600) / 60);
+  const seconds = String(secs % 60).padStart(2, '0');
+  return hours
+    ? `${hours}:${String(minutes).padStart(2, '0')}:${seconds}`
+    : `${minutes}:${seconds}`;
 }
