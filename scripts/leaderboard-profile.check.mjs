@@ -53,9 +53,9 @@ async function ticket(episode,playerToken,campaignId){
 function score(episode,combatScore=1100,livesLeft=2){
  return combatScore+base[episode]+livesLeft*400+1800;
 }
-async function finish(episode,playerToken,t,nickname='Игрок-01',combat=1100){
+async function finish(episode,playerToken,t,nickname='Игрок-01',combat=1100,elapsedSec=1){
  const payload={...run,episode,playerToken,token:t.token,nickname,
-  combatScore:combat,score:score(episode,combat),livesLeft:2,elapsedSec:1};
+  combatScore:combat,score:score(episode,combat),livesLeft:2,elapsedSec};
  const result=await post('/api/leaderboard',payload);
  assert.equal(result.status,201,JSON.stringify(result));
  return {result:result.body,payload};
@@ -87,24 +87,35 @@ try{
  assert.equal((await list('campaign')).entries.length,0);
  assert.equal((await list(1)).entries.length,1);
  assert.equal((await list(2)).entries.length,0);
- assert.equal((await list('all')).entries.length,1);
+ const firstOverall=(await list('all')).entries;
+ assert.equal(firstOverall.length,1);
+ assert.equal(firstOverall[0].score,score(1));
+ assert.equal(firstOverall[0].elapsedSec,1);
+ assert.equal(firstOverall[0].missionsCompleted,1);
+ assert.equal((await (await fetch(url+'/api/leaderboard')).json()).difficulty,'rookie','Default difficulty is rookie');
  assert.equal((await post('/api/leaderboard',one.payload)).status,409);
  let chain=first.campaignId;
  let total=score(1);
  for(let ep=2;ep<=6;ep++){
   const t=await ticket(ep,key,chain);
   assert.equal(t.campaignId,chain,'Sequential campaign must remain attached at episode '+ep);
-  await new Promise(r=>setTimeout(r,630));
-  const {result}=await finish(ep,key,t);
+  await new Promise(r=>setTimeout(r,ep===2?1250:630));
+  const {result}=await finish(ep,key,t,'Игрок-01',1100,ep===2?2:1);
   total+=score(ep);
   assert.equal(result.campaign.totalScore,total);
   assert.equal(result.campaign.missions,ep);
   assert.equal(result.campaign.completed,ep===6);
+  const cumulative=(await list('all')).entries;
+  assert.equal(cumulative.length,1,'One row per persistent player');
+  assert.equal(cumulative[0].score,total,'All missions sum their personal-best scores');
+  assert.equal(cumulative[0].elapsedSec,ep+1,'All missions sum their personal-best durations');
+  assert.equal(cumulative[0].missionsCompleted,ep,'Each distinct mission is counted once');
   if(ep<6)assert.equal((await list('campaign')).entries.length,0);
  }
  let boards=await list('campaign');
  assert.equal(boards.entries.length,1);
  assert.equal(boards.entries[0].score,total);
+ assert.equal(boards.entries[0].elapsedSec,7);
  assert.equal(boards.entries[0].nickname,'Игрок-01');
  assert.equal((await list('all')).entries.length,1,'Six missions must not duplicate one player');
  for(let ep=1;ep<=6;ep++)assert.equal((await list(ep)).entries.length,1);
@@ -124,11 +135,19 @@ try{
  assert.equal(best.entries[0].score,score(1));
  assert.equal(best.entries[0].nickname,'Новый позывной');
  assert.equal((await list('campaign')).entries[0].nickname,'Новый позывной');
- assert.equal((await list('all')).entries.length,2);
+ const overallAfterReplay=(await list('all')).entries;
+ assert.equal(overallAfterReplay.length,2);
+ assert.equal(overallAfterReplay[0].nickname,'Новый позывной');
+ assert.equal(overallAfterReplay[0].score,total,'Worse mission replay must not reduce the total');
+ assert.equal(overallAfterReplay[0].elapsedSec,7,'Worse replay must not replace best mission time');
+ assert.equal(overallAfterReplay[0].missionsCompleted,6);
+ assert.equal(overallAfterReplay[1].missionsCompleted,1,'Other player has one completed mission');
  await stop();
  await start();
  assert.equal((await list('campaign')).entries[0].score,total,'Campaign must survive reboot');
  assert.equal((await list(1)).entries[0].nickname,'Новый позывной','Player nickname survives reboot');
+ assert.equal((await list('all')).entries[0].score,total,'Summed leaderboard survives restart');
+ assert.equal((await list('all')).entries[0].elapsedSec,7);
  const invalid=await fetch(url+'/api/leaderboard?difficulty=rookie&scope=campaign&episode=2');
  assert.equal(invalid.status,400);
  console.log('PASS: device identity, anti-impersonation, one personal best per episode, six-stage campaign proof, nickname updates, replay protection and SQLite restart');
