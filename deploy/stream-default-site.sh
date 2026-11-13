@@ -215,8 +215,10 @@ systemctl reload nginx.service || die 'Graceful reload failed; removing the new 
 # A successful systemctl reload only signals Nginx. With stream reuseport, old
 # workers can still accept the first TLS connections with the old default
 # certificate before newly configured workers start accepting connections.
-# Check the named HTTPS backend first, then the REAL 443 SNI path, and require
-# a verified TLS handshake and HTTP 200 at both. Do not use -k or weaken TLS.
+# Check both verified TLS endpoints AND require the exact staged site HTML.
+# A pre-existing HTTPS default host can share the same valid certificate,
+# so certificate-only checks may accept an old worker serving the wrong site.
+# Do not use -k or weaken TLS.
 say 'Waiting for the named HTTPS vhost and stream gateway to serve the new certificate'
 tls_ready=0
 attempt=0
@@ -227,7 +229,9 @@ while [ "$attempt" -lt 24 ]; do
       "https://$DOMAIN:$PORT/" -o "$TMP/backend.html" 2>"$TMP/backend.err" &&
     curl -fsS --noproxy '*' --connect-timeout 2 --max-time 6 \
       --resolve "$DOMAIN:443:127.0.0.1" \
-      "https://$DOMAIN/" -o "$TMP/index.html" 2>"$TMP/stream.err"; then
+      "https://$DOMAIN/" -o "$TMP/index.html" 2>"$TMP/stream.err" &&
+    cmp -s "$TMP/backend.html" "$WEBROOT/index.html" &&
+    cmp -s "$TMP/index.html" "$WEBROOT/index.html"; then
     tls_ready=1
     break
   fi
@@ -238,7 +242,7 @@ if [ "$tls_ready" -ne 1 ]; then
   cat "$TMP/backend.err" >&2 || :
   echo 'Stream SNI HTTPS check:' >&2
   if [ -f "$TMP/stream.err" ]; then cat "$TMP/stream.err" >&2; fi
-  die 'New certificate not consistently selected after graceful reload; vhost rollback will restore Nginx. Confirm SNI/backend routing before another attempt.'
+  die 'New HTTPS vhost not consistently serving the staged game after graceful reload; vhost rollback will restore Nginx. Confirm SNI/backend routing before another attempt.'
 fi
 say 'HTTPS certificate verified on both backend and port 443; checking JS, CSS, graphics, API'
 grep -Fq '/assets/' "$TMP/index.html" || die 'Home page does not link JS assets.'
