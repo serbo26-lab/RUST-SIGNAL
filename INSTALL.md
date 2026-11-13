@@ -10,7 +10,7 @@
 | --- | --- | --- |
 | Ubuntu (apt) | `apt-get` | Проверено на Ubuntu 26.04 |
 | Debian 13 (trixie) | `apt-get` | Проверено на реальном VPS |
-| CentOS Stream / Rocky / AlmaLinux | `dnf` | Ветка установщика предусмотрена; требуется проверка на доступном CentOS VPS |
+| CentOS Stream 9 | `dnf` | Проверено на чистом VPS: Nginx, игра, рейтинг и HTTP |\n| Rocky / AlmaLinux | `dnf` | Поддержка предусмотрена в установщике; на отдельном VPS не проверено |
 | FreeBSD 15 (amd64) | `pkg`, служба `rc.d` | Проверено на реальном VPS |
 
 ### Debian / Ubuntu
@@ -32,7 +32,7 @@ sh -n /tmp/rust-signal-vps.sh
 sh /tmp/rust-signal-vps.sh install
 ```
 
-Для CentOS-подобных ОС обязательно проверьте SELinux и доступ по HTTP после установки: автоматизированное тестирование `dnf`/SELinux на выделенном CentOS VPS пока не завершено.
+Если на CentOS/RHEL активен `firewalld`, основной установщик разрешает **HTTP (порт 80)** в действующих и постоянных настройках стандартной зоны. Другие правила и HTTPS он не меняет. На проверенном CentOS Stream 9 SELinux был отключён; режим **Enforcing ещё не проверен**.
 
 ### FreeBSD 15 (amd64)
 
