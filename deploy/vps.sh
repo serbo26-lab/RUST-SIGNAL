@@ -573,6 +573,22 @@ if [ "$OS" = freebsd ]; then
 else
   if systemctl is-active --quiet nginx; then systemctl reload nginx; else systemctl enable --now nginx; fi
 fi
+# CentOS Stream / RHEL-family images commonly ship with an active firewalld
+# that allows SSH but blocks HTTP. Open only the site's HTTP service, without
+# flushing or replacing any existing firewall rules. HTTPS is left untouched.
+if [ "$OS" = dnf ] && systemctl is-active --quiet firewalld; then
+  command -v firewall-cmd >/dev/null 2>&1 ||
+    fail 'firewalld is active but firewall-cmd is unavailable.'
+  if ! firewall-cmd --query-service=http >/dev/null 2>&1; then
+    firewall-cmd --add-service=http >/dev/null ||
+      fail 'Could not allow HTTP in the running firewalld default zone.'
+  fi
+  if ! firewall-cmd --permanent --query-service=http >/dev/null 2>&1; then
+    firewall-cmd --permanent --add-service=http >/dev/null ||
+      fail 'Could not persist the HTTP allowance in firewalld.'
+  fi
+  say 'firewalld: HTTP allowed in the default zone (runtime and permanent).'
+fi
 mkdir -p "$STATE_DIR"
 printf '%s\n' "$DOMAIN" > "$STATE_DIR/domain"
 printf '%s\n' "$revision" > "$STATE_DIR/revision"
