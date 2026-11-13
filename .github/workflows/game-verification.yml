@@ -45,6 +45,7 @@ jobs:
           sh -n deploy/vps.sh
           bash -n deploy/vps.sh
           node scripts/check-vps-layout.mjs
+          node scripts/firewalld.check.mjs
           node scripts/vps-smoke.mjs
       - name: Verify FreeBSD rc.d / Node SQLite installer
         run: |
