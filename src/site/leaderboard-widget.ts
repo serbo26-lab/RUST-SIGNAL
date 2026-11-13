@@ -2,14 +2,6 @@ import type { DifficultyId, EpisodeId } from '../game/core';
 import { DIFFICULTY_META, DIFFICULTY_ORDER, EPISODE_LABELS, HERO_LABELS, formatDuration, type LeaderboardEntry } from '../game/leaderboard';
 import { getOnlineLeaderboard, type OnlineScope } from '../game/online-leaderboard';
 
-function savedDifficulty(): DifficultyId {
-  try {
-    const d = localStorage.getItem('rs_diff');
-    if (d === 'rookie' || d === 'veteran' || d === 'hardcore') return d;
-  } catch { /* browsing without storage */ }
-  return 'veteran';
-}
-
 function message(body: HTMLElement, value: string, isError = false): void {
   body.replaceChildren();
   const element = document.createElement('div');
@@ -54,8 +46,10 @@ function renderRows(body: HTMLElement, diff: DifficultyId, entries: LeaderboardE
     const name = document.createElement('strong');
     name.textContent = entry.nickname;
     const meta = document.createElement('small');
-    meta.textContent = (scope === 'campaign' ? '6 миссий подряд' : EPISODE_LABELS[entry.episode]) +
-      ' · ' + HERO_LABELS[entry.character] + ' · ' + formatDuration(entry.elapsedSec);
+    meta.textContent = scope === 'all'
+      ? (entry.missionsCompleted ?? 1) + '/6 миссий · общее время ' + formatDuration(entry.elapsedSec)
+      : (scope === 'campaign' ? '6 миссий подряд' : EPISODE_LABELS[entry.episode]) +
+        ' · ' + HERO_LABELS[entry.character] + ' · ' + formatDuration(entry.elapsedSec);
     main.append(name, meta);
     const score = document.createElement('span');
     score.className = 'lb-score';
@@ -77,7 +71,7 @@ export function initLeaderboardWidget(root: HTMLElement | null = document.getEle
     if (p) panels.set(d, p);
   }
   if (!tabs.length || panels.size !== DIFFICULTY_ORDER.length) return;
-  let activeDifficulty = savedDifficulty();
+  let activeDifficulty: DifficultyId = 'rookie';
   let activeScope: OnlineScope = 'all';
   let requestVersion = 0;
 
@@ -105,7 +99,7 @@ export function initLeaderboardWidget(root: HTMLElement | null = document.getEle
     scopeHelp.textContent = activeScope === 'campaign'
       ? 'Сумма 6 миссий за одно непрерывное прохождение, сложность и боец не меняются.'
       : activeScope === 'all'
-        ? 'Лучший результат каждого игрока; старые рекорды сохранены.'
+        ? 'Сумма лучших результатов игрока за пройденные миссии и общее время.'
         : 'Лучший результат каждого игрока за эту миссию.';
   };
 
