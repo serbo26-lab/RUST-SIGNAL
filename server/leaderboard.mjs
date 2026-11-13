@@ -75,13 +75,17 @@ const upsertPlayerScore = db.prepare(`
  WHERE excluded.score>player_scores.score OR (excluded.score=player_scores.score AND excluded.elapsed_sec<player_scores.elapsed_sec)`);
 const selectMissionScores = db.prepare('SELECT s.id,p.nickname,s.score,s.episode,s.character,s.difficulty,s.lives_left AS livesLeft,s.elapsed_sec AS elapsedSec,s.date_iso AS dateIso FROM player_scores s JOIN players p ON s.owner_hash=p.owner_hash WHERE s.difficulty=? AND s.episode=? ORDER BY s.score DESC,s.elapsed_sec ASC LIMIT ?');
 const selectLegacyMission = db.prepare('SELECT id,nickname,score,episode,character,difficulty,lives_left AS livesLeft,elapsed_sec AS elapsedSec,date_iso AS dateIso FROM scores WHERE difficulty=? AND episode=? ORDER BY score DESC,elapsed_sec ASC LIMIT ?');
+// All missions = the sum of one personal best per completed mission.
+// UNIQUE(owner_hash,difficulty,episode) prevents duplicate mission counting.
 const selectPlayerOverall = db.prepare(`
- SELECT id,nickname,score,episode,character,difficulty,livesLeft,elapsedSec,dateIso FROM (
-   SELECT s.id,p.nickname,s.score,s.episode,s.character,s.difficulty,s.lives_left AS livesLeft,
-     s.elapsed_sec AS elapsedSec,s.date_iso AS dateIso,
-     ROW_NUMBER() OVER (PARTITION BY s.owner_hash ORDER BY s.score DESC,s.elapsed_sec ASC,s.episode DESC) AS pos
-   FROM player_scores s JOIN players p ON s.owner_hash=p.owner_hash WHERE s.difficulty=?
- ) WHERE pos=1 ORDER BY score DESC,elapsedSec ASC LIMIT ?`);
+ SELECT MIN(s.id) AS id,p.nickname,SUM(s.score) AS score,
+   MAX(s.episode) AS episode,MIN(s.character) AS character,s.difficulty,
+   0 AS livesLeft,SUM(s.elapsed_sec) AS elapsedSec,
+   MAX(s.date_iso) AS dateIso,COUNT(*) AS missionsCompleted
+ FROM player_scores s JOIN players p ON s.owner_hash=p.owner_hash
+ WHERE s.difficulty=?
+ GROUP BY s.owner_hash
+ ORDER BY score DESC,elapsedSec ASC,missionsCompleted DESC,dateIso DESC LIMIT ?`);
 const selectCampaignTop = db.prepare('SELECT c.id,p.nickname,c.score,6 AS episode,c.character,c.difficulty,0 AS livesLeft,c.elapsed_sec AS elapsedSec,c.date_iso AS dateIso FROM campaign_bests c JOIN players p ON c.owner_hash=p.owner_hash WHERE c.difficulty=? ORDER BY c.score DESC,c.elapsed_sec ASC LIMIT ?');
 const selectCampaign = db.prepare('SELECT * FROM campaigns WHERE id=?');
 const insertCampaign = db.prepare('INSERT INTO campaigns(id,owner_hash,difficulty,character,next_episode,total_score,total_elapsed_sec,created_ms,updated_ms) VALUES(?,?,?,?,1,0,0,?,?)');
@@ -99,7 +103,7 @@ const upsertCampaignBest = db.prepare(`
 const selectSession = db.prepare('SELECT * FROM sessions WHERE token_hash=?');
 const consumeSession = db.prepare('UPDATE sessions SET consumed_ms=? WHERE token_hash=? AND consumed_ms IS NULL');
 const insertScore = db.prepare('INSERT INTO scores(id,nickname,score,episode,character,difficulty,lives_left,elapsed_sec,date_iso) VALUES(?,?,?,?,?,?,?,?,?)');
-const selectTop = db.prepare('SELECT id,nickname,score,episode,character,difficulty,lives_left AS livesLeft,elapsed_sec AS elapsedSec,date_iso AS dateIso FROM scores WHERE difficulty=? ORDER BY score DESC,elapsed_sec ASC,episode DESC,date_iso DESC LIMIT ?');
+const selectTop = db.prepare('SELECT id,nickname,score,episode,character,difficulty,lives_left AS livesLeft,elapsed_sec AS elapsedSec,date_iso AS dateIso,1 AS missionsCompleted FROM scores WHERE difficulty=? ORDER BY score DESC,elapsed_sec ASC,episode DESC,date_iso DESC LIMIT ?');
 const trimScores = db.prepare('DELETE FROM scores WHERE difficulty=? AND id NOT IN (SELECT id FROM scores WHERE difficulty=? ORDER BY score DESC,elapsed_sec ASC,episode DESC,date_iso DESC LIMIT ?)');
 const expireSessions = db.prepare('DELETE FROM sessions WHERE started_ms < ?');
 const capSessions = db.prepare('DELETE FROM sessions WHERE token_hash IN (SELECT token_hash FROM sessions ORDER BY started_ms DESC, rowid DESC LIMIT -1 OFFSET ?)');
@@ -174,6 +178,7 @@ function validPlayerToken(token) {
 function tokenHash(token) { return createHash('sha256').update(token).digest('hex'); }
 function topEntries(diff,scope='all',episode=null){
   if(scope==='campaign') return selectCampaignTop.all(diff,MAX_ENTRIES);
+  // Legacy anonymous scores have no verified player identity; keep them as single-mission records.
   const legacy=scope==='episode'?selectLegacyMission.all(diff,episode,MAX_ENTRIES):selectTop.all(diff,MAX_ENTRIES);
   const modern=scope==='episode'?selectMissionScores.all(diff,episode,MAX_ENTRIES):selectPlayerOverall.all(diff,MAX_ENTRIES);
   return legacy.concat(modern).sort((a,b)=>b.score-a.score || a.elapsedSec-b.elapsedSec || b.episode-a.episode || b.dateIso.localeCompare(a.dateIso)).slice(0,MAX_ENTRIES);
@@ -183,7 +188,7 @@ async function handler(req,res){
   if(req.method==='GET'&&url.pathname==='/api/health')
     return send(res,200,{ok:true,service:'rust-signal-leaderboard',mode:'global'});
   if(req.method==='GET'&&url.pathname==='/api/leaderboard'){
-    const difficulty=url.searchParams.get('difficulty')||'veteran';
+    const difficulty=url.searchParams.get('difficulty')||'rookie';
     if(!validDifficulty(difficulty))return send(res,400,{error:'Неизвестная сложность'});
     const epRaw=url.searchParams.get('episode');
     const scope=url.searchParams.get('scope')||(epRaw?'episode':'all');
