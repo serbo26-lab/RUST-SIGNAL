@@ -314,7 +314,22 @@ git clone --quiet --depth 1 --single-branch --branch "$BRANCH" "$REPO_URL" "$WOR
 cd "$WORK/source"
 revision=$(git rev-parse --short=12 HEAD)
 say "Building commit $revision"
-if [ "$OS" != freebsd ] && [ -z "$(printenv RUST_SIGNAL_SKIP_NONROOT_BUILD 2>/dev/null || :)" ]; then
+if [ "$OS" = freebsd ] && [ -z "$(printenv RUST_SIGNAL_SKIP_NONROOT_BUILD 2>/dev/null || :)" ]; then
+  # FreeBSD has no runuser; su -m preserves the controlled HOME/PATH environment.
+  # Never execute npm package lifecycle scripts as root on a real VPS.
+  if id rustsignalbuild >/dev/null 2>&1; then
+    account=$(getent passwd rustsignalbuild)
+    case "$account" in *:/nonexistent:*/nologin) ;;
+      *) fail 'Existing rustsignalbuild account is not a restricted build user.';;
+    esac
+  else
+    pw useradd rustsignalbuild -d /nonexistent -s /usr/sbin/nologin -c RustSignalBuild
+  fi
+  chown -R rustsignalbuild "$WORK"
+  say 'Building website as unprivileged rustsignalbuild user on FreeBSD'
+  env HOME="$WORK" NPM_CONFIG_CACHE="$WORK/npm-cache" PATH="$PATH" CI=1 \
+    su -m rustsignalbuild -c 'npm ci --no-audit --no-fund && npm run build'
+elif [ "$OS" != freebsd ] && [ -z "$(printenv RUST_SIGNAL_SKIP_NONROOT_BUILD 2>/dev/null || :)" ]; then
   # npm lifecycle scripts and bundlers must never run with root privileges.
   if [ "$OS" = apt ]; then ensure_command useradd passwd
   else ensure_command useradd shadow-utils; fi
